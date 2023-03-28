@@ -11,63 +11,39 @@ class Piece {
     PAWN = 0, BISHOP, KNIGHT, ROOK, QUEEN, KING
   };
 
-  static Piece* make(char ch, int rank_idx, int file_idx);
-  static Piece* make(Color color, Type type, int rank_idx, int file_idx);
+  Piece(char ch, int rank_idx, int file_idx);
+  Piece(Color color, Type type, int rank_idx, int file_idx);
 
-  virtual ~Piece() {}
+  Color get_color() { return color; }
+  Type get_type() { return type; }
+  Position get_position() { return pos; }
 
   std::string to_string();
 
-  // returns possible moves on a theoretically empty board
-  // these moves are culled later before actually being evaluated
-  virtual std::vector<Position> get_moves() = 0;
-
- protected:
-  Piece(Color color, Type type, int rank_idx, int file_idx);
-
+ private:
   Color color;
   Type type;
   Position pos;
 };
 
-class Pawn : public Piece {
- public:
-  Pawn(Color color, int rank_idx, int file_idx);
+class Move {
+public:
+  static constexpr int FLAG_EP = 1;
+  static constexpr int FLAG_CASTLE = 2;
+  static constexpr int FLAG_PROMOTE_B = 3;
+  static constexpr int FLAG_PROMOTE_N = 4;
+  static constexpr int FLAG_PROMOTE_R = 5;
+  static constexpr int FLAG_PROMOTE_Q = 6;
 
-  std::vector<Position> get_moves();
-};
+  Move(Position from, Position to, Piece* captured, int flags)
+    : from(from), to(to), captured(captured)
+  {}
 
-class Bishop : public Piece {
- public:
-  Bishop(Color color, int rank_idx, int file_idx);
+  std::string to_string();
 
-  std::vector<Position> get_moves();
-};
-
-class Knight : public Piece {
- public:
-  Knight(Color color, int rank_idx, int file_idx);
-
-  std::vector<Position> get_moves();
-};
-
-class Rook : public Piece {
- public:
-  Rook(Color color, int rank_idx, int file_idx);
-
-  std::vector<Position> get_moves();
-};
-
-class Queen : public Piece {
- public:
-  Queen(Color color, int rank_idx, int file_idx);
-
-  std::vector<Position> get_moves();
-};
-
-class King : public Piece {
- public:
-  King(Color color, int rank_idx, int file_idx);
-
-  std::vector<Position> get_moves();
+private:
+  Position from;
+  Position to;
+  Piece* captured;
+  int flags;
 };
